@@ -8,6 +8,11 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(express.json());
 
+// Root route to test if server is working
+app.get('/', (req, res) => {
+  res.send('Welcome to the LeetCode API Proxy!');
+});
+
 // Proxy endpoint to get LeetCode user data
 app.post('/api/leetcode/user', async (req, res) => {
   const { username } = req.body;
