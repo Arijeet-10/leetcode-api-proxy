@@ -1,54 +1,37 @@
-const express = require('express');
-const fetch = require('node-fetch');
-const cors = require('cors');
-
+const express = require('express')
 const app = express();
-const PORT = process.env.PORT || 8080;
+const cors = require('cors')
+const path = require('path');
+const {rateLimit} = require('express-rate-limit');
 
-app.use(cors());
-app.use(express.json());
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 100,
+    standardHeaders: 'draft-7',
+    legacyHeaders: false
+})
 
-// Root route to test if server is working
+const specificLimiter = rateLimit({
+    windowMs: 1 * 60 * 1000, 
+    max: 10,
+    message: '<b>Too many requests for this route, please try again later.</b>'
+  });
+  
+
+app.use(limiter);
+
+app.use(express.static('public'));
+
+app.use(cors({
+    origin: '*'
+}))
+
+let leet = require('./leetcode');
 app.get('/', (req, res) => {
-  res.send('Welcome to the LeetCode API Proxy!');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+app.get('/:id', specificLimiter, leet.leetcode);
 
-// Proxy endpoint to get LeetCode user data
-app.post('/api/leetcode/user', async (req, res) => {
-  const { username } = req.body;
-
-  const query = `
-    query userProfile($username: String!) {
-      matchedUser(username: $username) {
-        username
-        submitStats {
-          acSubmissionNum {
-            count
-            difficulty
-          }
-        }
-      }
-    }
-  `;
-
-  try {
-    const response = await fetch('https://leetcode.com/graphql/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ query, variables: { username } }),
-    });
-
-    const data = await response.json();
-
-    if (!data.data?.matchedUser) return res.status(404).json({ error: 'User not found' });
-
-    res.json({
-      username: data.data.matchedUser.username,
-      problemsSolved: data.data.matchedUser.submitStats.acSubmissionNum,
-    });
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch data from LeetCode' });
-  }
+app.listen(3000, () => {
+    console.log(`App is running on port 3000`);
 });
-
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

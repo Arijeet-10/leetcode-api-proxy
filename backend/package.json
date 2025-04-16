@@ -1,17 +1,30 @@
 {
-  "name": "backend",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "express-rate-limit": "^7.5.0",
+    "node-fetch": "^3.3.2"
+  },
+  "name": "leetcode_api",
   "version": "1.0.0",
+  "description": "leetcode api",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "server": "nodemon index.js"
   },
-  "dependencies": {
-    "express": "^4.18.2",
-    "node-fetch": "^2.6.11",
-    "cors": "^2.8.5"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/faisal-shohag/leetcode_api.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "leetcode"
+  ],
+  "author": "faisal_shohag",
   "license": "ISC",
-  "description": ""
+  "bugs": {
+    "url": "https://github.com/faisal-shohag/leetcode_api/issues"
+  },
+  "homepage": "https://github.com/faisal-shohag/leetcode_api#readme"
 }
